@@ -2,7 +2,7 @@
 
 var tournamentID=12;
 var user_name='olgacob';
-var socket = require('socket.io-client')('http://192.168.0.10:3000');
+var socket = require('socket.io-client')('http://192.168.56.1:3000');
 
 socket.on('connect', function(){
   socket.emit('signin', {
@@ -61,7 +61,7 @@ socket.on('finish', function(data){
   var winnerTurnID = data.winner_turn_id;
   var board = data.board;
 
-  
+  console.log("fin");
   // TODO: Your cleaning board logic here
 
   socket.emit('player_ready', {
@@ -109,9 +109,24 @@ function validateMovement(board2d, col, row, playerID){
         if (i >= 0 && board2d[i][col] == 0){
             
             movPosibles.push(i*8 + col);
-            console.log("arriba posible");
+            //console.log("arriba posible");
         }
 	}
+
+	//abajo
+	i = row + 1;
+	if (i < 8 && board2d[i][col] == other) {
+		i = i + 1;
+		while (i < 8 && board2d[i][col] == other){
+            i = i + 1;
+        }
+        if (i < 8 && board2d[i][col] == 0){
+            
+            movPosibles.push(i*8 + col);
+            //console.log("abajo posible");
+        }
+	}
+
 	return movPosibles;
 }
 
