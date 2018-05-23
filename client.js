@@ -196,11 +196,24 @@ function validateMovement(board2d, col, row, playerID){
 		} 
 		if(i < 8 && j < 8 && board2d[i][j] == 0){
 			movPosibles.push(i*8 + j);
-			console.log("abajo derecha");
 		}
 	}
 
-
+	//abajo izquierda
+	i = row + 1;
+	j = col - 1;
+	if (i <8 && j >= 0 && board2d[i][j] == other) {
+		i = i + 1;
+		j = j - 1;
+		while (i < 8 && j >= 0 && board2d[i][j] == other){
+			i = i + 1;
+			j = j - 1;
+		} 
+		if(i < 8 && j >= 0 && board2d[i][j] == 0){
+			movPosibles.push(i*8 + j);
+			console.log("abajo izquierda");
+		}
+	}
 
 	return movPosibles;
 }
