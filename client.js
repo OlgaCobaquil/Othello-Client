@@ -135,7 +135,19 @@ function validateMovement(board2d, col, row, playerID){
         }
         if (j < 8 && board2d[row][j] == 0){   
             movPosibles.push(row*8 + j);
-            console.log("dere posible");
+      
+        }
+	}
+
+	//izquierda
+	j = col - 1;
+	if (j >= 0 && board2d[row][j] == other) {
+		j = j - 1;
+		while (j >= 0 && board2d[row][j] == other){
+            j = j - 1;
+        }
+        if (j >= 0 && board2d[row][j] == 0){
+            movPosibles.push(row*8 + j);
         }
 	}
 	return movPosibles;
