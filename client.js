@@ -22,10 +22,29 @@ socket.on('ready', function(data){
   var playerTurnID = data.player_turn_id;
   var board = data.board;
   var oponente = getOponent(playerTurnID);
-  transform(board);
+  var b2d = transform(board);
   //validateMovement(board, oponente, playerTurnID);
   
   // TODO: Your logic / user input here
+  var movimientos = [];
+  for(var i = 0; i <b2d[0].length; i++){
+  	for(var j = 0; j < b2d[0].length; j++){
+  		//si es el id del jugador
+  		if (b2d[i][j] == playerTurnID){
+  			//validar los posibles movimientos en base al tablero
+  			var mov = validateMovement(b2d, j, i, playerTurnID);
+  			for (var k = 0; k<mov.length;k++){
+                  if(!movimientos.includes(mov[k])){
+                      movimientos.push(mov[k]);
+                  }
+              }
+
+  		}
+  	}
+  }
+  console.log("posibles: ", movimientos);
+  
+  var tira = movimientos[Math.floor(Math.random() * movimientos.length)];
   var rand = Math.floor(Math.random() * 64); //random para probar
   console.log(rand);
   socket.emit('play', {
@@ -52,8 +71,8 @@ socket.on('finish', function(data){
   });
 });
 
-function getOponent(playerTurnID){
-	if (playerTurnID === 1){
+function getOponent(playerID){
+	if (playerID === 1){
 		return 2
 	}
 	else {
@@ -68,40 +87,33 @@ function transform(board){
 	return board2D;
 }
 
-function validateMovement(board2d, oponentID, myId){
+function validateMovement(board2d, col, row, playerID){
 	movPosibles = []
-	var legal = false;
-	for (i = 0; i < board.length; i++) {
-
-		if(board[i]===0){
-    		console.log('vacio');
-    		//para los horizontales
-			for (x = -1; x<= 1; x++) {
-				
-				var found = false;
-				var temp = i + x;
-				current = board[i + x];
-				
-				while (!found){
-					temp += x;
-					current = board[temp]
-					if (current === oponentID){
-						found = true;
-						legal = true;
-						console.log('encontre valido');
-
-					}
-
-				}
-			}
-    	}
-		//asegurarse que el adyacente no es del mismo color
-		//if (board[i+1]!= oponentID && board[i+2] == 0){
-		//	console.log('posible tiro en ', i+2)
-		//} 
-    	
+	var i, j = 0;
+	var other = 1;
+	if (playerID ==1){
+		other = 2;
 	}
-	
-	return board
+
+	if (row < 0 || row > 7 ||col < 0 || col > 7){
+		return movPosibles;
+	} 
+	//comienza la evaluacion de posibles movimientos
+	//Arriba
+	i = row - 1;
+	if (i >= 0 && board2d[i][col] == other) {
+		i = i - 1;
+		while (i >= 0 && board2d[i][col] == other){
+            i = i - 1;
+        }
+        if (i >= 0 && board2d[i][col] == 0){
+            
+            movPosibles.push(i*8 + col);
+            console.log("arriba posible");
+        }
+	}
+	return movPosibles;
 }
+
+
 
