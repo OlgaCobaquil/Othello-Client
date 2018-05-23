@@ -99,7 +99,7 @@ function validateMovement(board2d, col, row, playerID){
 	if (row < 0 || row > 7 ||col < 0 || col > 7){
 		return movPosibles;
 	} 
-	//comienza la evaluacion de posibles movimientos
+	//comienza la evaluacion de posibles movimientos (arriba, abajo, derecha izquierda)
 	//Arriba
 	i = row - 1;
 	if (i >= 0 && board2d[i][col] == other) {
@@ -149,6 +149,23 @@ function validateMovement(board2d, col, row, playerID){
         if (j >= 0 && board2d[row][j] == 0){
             movPosibles.push(row*8 + j);
         }
+	}
+
+	//Diagonales
+	//arriba derecha
+	i = row - 1;
+	j = col + 1;
+	if (i >= 0 && j < 8 && board2d[i][j] == other) {
+		i = i - 1;
+		j = j + 1;
+		while (i >= 0 && j < 8 && board2d[i][j] == other){
+			i = i - 1;
+			j = j + 1;
+		} 
+		if(i >= 0 && j < 8 && board2d[i][j] == 0){
+			movPosibles.push(i*8 + j);
+			console.log("noreste funcionando");
+		}
 	}
 	return movPosibles;
 }
