@@ -34,6 +34,7 @@ socket.on('ready', function(data){
   			//validar los posibles movimientos en base al tablero
   			var mov = validateMovement(b2d, j, i, playerTurnID);
   			for (var k = 0; k<mov.length;k++){
+  				//verificar que no se repitan los posibles movimientos 
                   if(!movimientos.includes(mov[k])){
                       movimientos.push(mov[k]);
                   }
@@ -107,7 +108,6 @@ function validateMovement(board2d, col, row, playerID){
             i = i - 1;
         }
         if (i >= 0 && board2d[i][col] == 0){
-            
             movPosibles.push(i*8 + col);
             //console.log("arriba posible");
         }
@@ -120,13 +120,24 @@ function validateMovement(board2d, col, row, playerID){
 		while (i < 8 && board2d[i][col] == other){
             i = i + 1;
         }
-        if (i < 8 && board2d[i][col] == 0){
-            
+        if (i < 8 && board2d[i][col] == 0){   
             movPosibles.push(i*8 + col);
             //console.log("abajo posible");
         }
 	}
 
+	//derecha
+	j = col + 1;
+	if (j < 8 && board2d[row][j] == other) {
+		j = j + 1;
+		while (j < 8 && board2d[row][j] == other){
+            j = j + 1;
+        }
+        if (j < 8 && board2d[row][j] == 0){   
+            movPosibles.push(row*8 + j);
+            console.log("dere posible");
+        }
+	}
 	return movPosibles;
 }
 
