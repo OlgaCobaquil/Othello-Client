@@ -4,7 +4,7 @@
 
 var tournamentID=12;
 var user_name='olgacob';
-var socket = require('socket.io-client')('http://192.168.20.12:3000');
+var socket = require('socket.io-client')('http://192.168.1.149:3000');
 //var socket = require('socket.io-client')('http://10.171.219.47:3000');
 var rMovs = [];
 
@@ -57,10 +57,10 @@ socket.on('ready', function(data){
 		
   //var board = nextBoard(prueba, 1, [22]);
   //console.log ("return reli: ",reli);	
-
+  //var m = minimax(b2d, 0, -10000, 10000, playerTurnID, mov, pesos);
   //var movimiento1=maxVal(prueba,2,-100000,100000, playerTurnID);	 
-  var reli = flipCoinV2(prueba, 1, 22);
-  console.log("Reurn flip ", reli);
+  //var reli = flipCoinV2(prueba, 1, 22);
+  //console.log("Reurn flip ", reli);
 
   var bo = nextBoard(prueba, 1, [22]);
   console.log ("nuevo tablero flip: ",bo);	
