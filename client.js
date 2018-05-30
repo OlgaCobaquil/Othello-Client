@@ -4,7 +4,7 @@
 
 var tournamentID=12;
 var user_name='olgacob';
-var socket = require('socket.io-client')('http://192.168.0.18:3000');
+var socket = require('socket.io-client')('http://192.168.20.12:3000');
 //var socket = require('socket.io-client')('http://10.171.219.47:3000');
 var rMovs = [];
 
@@ -55,12 +55,16 @@ socket.on('ready', function(data){
   [ 0, 0, 0, 0, 0, 0, 0, 0 ],
   [ 0, 0, 0, 0, 0, 0, 0, 0 ] ];
 		
-  //var reli = nextBoard(prueba, 1, [22]);
+  //var board = nextBoard(prueba, 1, [22]);
   //console.log ("return reli: ",reli);	
 
-  var movimiento1=maxVal(prueba,2,-100000,100000, playerTurnID);	 
+  //var movimiento1=maxVal(prueba,2,-100000,100000, playerTurnID);	 
   var reli = flipCoinV2(prueba, 1, 22);
-  console.log("Prueba flip ", reli);
+  console.log("Reurn flip ", reli);
+
+  var bo = nextBoard(prueba, 1, [22]);
+  console.log ("nuevo tablero flip: ",bo);	
+
 
   var tira = mov[Math.floor(Math.random() * mov.length)];
   
@@ -530,10 +534,11 @@ function minVal(s, depth, alpha, beta, oponentID){
 }
 
 /*--------------------------MINIMAX--------------------------------*/
-function minimax (s, depth, alpha, beta, playerID, evaluatedP){
+function minimax (s, depth, alpha, beta, playerID, evaluatedP, pesosM){
 	//segun un paper el depth que mejor funciona es 5
 	if(depth == 5){
 		console.log("Devolvere las heuristicas");
+		return heuristicas(s, playerID, pesosM)
 	}
 	let opID = getOponent(playerID);
 	
@@ -549,6 +554,10 @@ function minimax (s, depth, alpha, beta, playerID, evaluatedP){
 }
 
 /*----------------------Heuristicas-----------------------------*/
+
+function heuristica(s, idMy, ps){
+	return esquinas(s, idMy) + estabilidad(s, idMy, ps);
+}
 
 //Esquinas
 
@@ -591,8 +600,21 @@ function esquinas(S, myID){
 }
 //Estabilidad -> pesos
 
-function estabilidad(s){
-
+function estabilidad(s, miId, pes){
+	let op = getOponent(miId);
+	let mio = 0;
+	let otro = 0;
+	for(var i = 0; i < s.length; i++){
+		for(var j = 0; s.length; j++){
+			if(s[i][j] == miId){
+				mio = mio + pes[i][j];
+			}
+			if (s[i][j] == op){
+				otro = otro + pes[i][j];
+			}
+		}
+	}
+	return 100.0 * (mio-otro)/(mio+otro);
 }
 
 /*--------------------Posibles para todo el tablero------------------------*/
