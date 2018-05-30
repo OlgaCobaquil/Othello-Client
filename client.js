@@ -4,7 +4,8 @@
 
 var tournamentID=12;
 var user_name='olgacob';
-var socket = require('socket.io-client')('http://192.168.0.18:3000');
+//casa var socket = require('socket.io-client')('http://192.168.0.18:3000');
+var socket = require('socket.io-client')('http://10.171.219.47:3000');
 var rMovs = [];
 
 socket.on('connect', function(){
@@ -25,7 +26,11 @@ socket.on('ready', function(data){
   var playerTurnID = data.player_turn_id;
   var board = data.board;
   var oponente = getOponent(playerTurnID);
+  var hola = getBoard1d(board);
+  var hola2 = getBoard1d(board);
   var b2d = transform(board);
+  var b2d2 = transform(hola2);
+  
   //validateMovement(board, oponente, playerTurnID);
   
   // TODO: Your logic / user input here
@@ -59,20 +64,23 @@ socket.on('ready', function(data){
 
   	}
   }*/
+  
 
   var mov = validateMovement(b2d, playerTurnID);
-  var sl = board.slice();
-  for (var i = 0; i< mov.length; i++){
-  	var hola = mov[i];
-  	var bye = posibleFlip( sl, playerTurnID, mov);
-  }
   console.log("posibles: ", mov);
+  var flp = flipCoin(b2d2, playerTurnID);
+  console.log("flip ", flp);
+
+  //console.log("hd ", hola);
+  /*
+  for(var i =0; i<mov.length; i++){
+        var move = mov[i];
+        //console.log("b" ,board);
+        var next =createBoard(hola , playerTurnID, mov);
+    }*/
+
   //var alfa = runAlphaBeta(b2d, -100000, 100000);
   //console.log("oponente: ", movimientosOp);
-  var hola = board.slice();
-  var flip = posibleFlip(hola,playerTurnID, mov);
-
-  console.log ("a cabiar ". flip);
   var tira = mov[Math.floor(Math.random() * mov.length)];
   var rand = Math.floor(Math.random() * 64); //random para probar
   console.log("Movimiento: ",tira);
@@ -109,10 +117,16 @@ function getOponent(playerID){
 	}
 }
 
+function getBoard1d(board){
+	var d1b = board.slice();
+	return d1b;
+
+} 
+
 function transform(board){
 	var board2D = [];
 	while(board.length) board2D.push(board.splice(0,8));
-	console.log(board2D);
+	//console.log(board2D);
 	return board2D;
 }
 
@@ -260,6 +274,186 @@ function validateMovement(board2d, playerID){
               }
 	return movFinales;
 }
+
+function flipCoin(board2d, playerID){
+	//console.log("adentro flip: ", board2d);
+	flipPosible = [];
+	movFinales =[];
+	finalisima = [];
+	var i, j = 0;
+	var other = 1;
+	if (playerID ==1){
+		other = 2;
+	}
+
+	//comienza la evaluacion de posibles movimientos (arriba, abajo, derecha izquierda)
+
+	for(var row = 0; row <board2d[0].length; row++){
+  		for(var col = 0; col < board2d[0].length; col++){
+
+  			if (board2d[row][col] == playerID){
+
+				//Arriba
+				i = row - 1;
+				if (i >= 0 && board2d[i][col] == other) {
+					i = i - 1;
+					while (i >= 0 && board2d[i][col] == other){
+			            flipPosible.push(i*8 + col);
+			            i = i - 1;
+			        }
+
+			        if (i >= 0 && board2d[i][col] ==playerID){
+			        	for(var x = 0; x < flipPosible.length; x++){
+			        		movFinales.push(flipPosible[x]);
+			        	}
+			            
+			        }
+			        
+				}
+
+				//abajo
+				i = row + 1;
+				if (i < 8 && board2d[i][col] == other) {
+					i = i + 1;
+					while (i < 8 && board2d[i][col] == other){
+
+						flipPosible.push(i*8 + col);
+			            i = i + 1;
+			        }
+			        if (i < 8 && board2d[i][col] == playerID){  
+			            for(var x = 0; x < flipPosible.length; x++){
+			        		movFinales.push(flipPosible[x]);
+			        	}
+			        }
+			        			       
+				}
+
+				//derecha
+				j = col + 1;
+				if (j < 8 && board2d[row][j] == other) {
+					j = j + 1;
+					while (j < 8 && board2d[row][j] == other){
+						flipPosible.push(row*8 + j);
+			            j = j + 1;   
+			        }
+			        if (j < 8 && board2d[row][j] == playerID){   
+			            for(var x = 0; x < flipPosible.length; x++){
+			        		movFinales.push(flipPosible[x]);
+			        	}
+			        }
+			       
+				}
+
+				//izquierda
+				j = col - 1;
+				if (j >= 0 && board2d[row][j] == other) {
+					j = j - 1;
+					while (j >= 0 && board2d[row][j] == other){
+						flipPosible.push(row*8 + j);
+			            j = j - 1;
+			        }
+			        if (j >= 0 && board2d[row][j] == playerID){
+			            for(var x = 0; x < flipPosible.length; x++){
+			        		movFinales.push(flipPosible[x]);
+			        	}
+			        }
+			        
+			     
+				}
+
+				//Diagonales
+				//arriba derecha
+				i = row - 1;
+				j = col + 1;
+				if (i >= 0 && j < 8 && board2d[i][j] == other) {
+					i = i - 1;
+					j = j + 1;
+					while (i >= 0 && j < 8 && board2d[i][j] == other){
+						flipPosible.push(i*8 + j);
+						i = i - 1;
+						j = j + 1;
+					} 
+
+					if(i >= 0 && j < 8 && board2d[i][j] == playerID){
+						for(var x = 0; x < flipPosible.length; x++){
+			        		movFinales.push(flipPosible[x]);
+			        	}
+					}
+				}
+
+				//arriba izquierda
+
+				i = row - 1;
+				j = col - 1;
+				if (i >= 0 && j >= 0 && board2d[i][j] == other) {
+					i = i - 1;
+					j = j - 1;
+					while (i >= 0 && j >= 0 && board2d[i][j] == other){
+						flipPosible.push(i*8 + j);
+						i = i - 1;
+						j = j - 1;
+					} 
+
+					if(i >= 0 && j >= 0  && board2d[i][j] == playerID){
+						for(var x = 0; x < flipPosible.length; x++){
+			        		movFinales.push(flipPosible[x]);
+			        	}
+					}
+
+				}
+
+				//abajo derecha
+
+				i = row + 1;
+				j = col + 1;
+				if (i <8 && j < 8 && board2d[i][j] == other) {
+					i = i + 1;
+					j = j + 1;
+					while (i < 8 && j < 8 && board2d[i][j] == other){
+						flipPosible.push(i*8 + j);
+						i = i + 1;
+						j = j + 1;
+					} 
+					if(i < 8 && j < 8 && board2d[i][j] == playerID){
+						for(var x = 0; x < flipPosible.length; x++){
+			        		movFinales.push(flipPosible[x]);
+			        	}
+					}
+			
+				}
+
+				//abajo izquierda
+				i = row + 1;
+				j = col - 1;
+				if (i <8 && j >= 0 && board2d[i][j] == other) {
+					i = i + 1;
+					j = j - 1;
+					while (i < 8 && j >= 0 && board2d[i][j] == other){
+						flipPosible.push(i*8 + j);
+						i = i + 1;
+						j = j - 1;
+					} 
+
+					if(i < 8 && j >= 0 && board2d[i][j] == 0){
+						for(var x = 0; x < flipPosible.length; x++){
+			        		movFinales.push(flipPosible[x]);
+			        	}
+					}
+					
+				}
+			}
+		}
+	}
+
+	for (var k = 0; k<movFinales.length;k++){
+  				//verificar que no se repitan los posibles movimientos 
+                  if(!finalisima.includes(movFinales[k])){
+                      finalisima.push(movFinales[k]);
+                  }
+              }
+    console.log("Finalisima" , finalisima);
+	return finalisima;
+}
 /*
 //esta no funciono 
 
@@ -284,6 +478,18 @@ var black = 1;
 var white = 2;
 var n = 8;
 var empty = 0;
+
+function  flip( board, player, posibles){
+	myPlayer = player;
+	opPlaley = getOponent(player);
+
+	for (var i = 0; i < posibles.length; i++){
+
+	}
+}
+/*
+//no funciona 
+
 function posibleFlip (board, playerID, pos){
 	var opositeColor = playerID === black ? white : black;
 	var pmoves = {
@@ -330,10 +536,23 @@ function posibleFlip (board, playerID, pos){
 		}
 
 	}
-	console.log(fichasAcambiar);
+	console.log( "fichas: ",fichasAcambiar);
 	return fichasAcambiar;
-}
+}*/
+//AQUI AQUI
+/*
+function createBoard(board, player, mov){
+	var sl = board.slice();
+	console.log(sl);
+	var fp = posibleFlip(sl, player, mov);
+	for(var i= 0; i<fp.length; i++){
+        sl[fp[i]] = player;
+    }
+    sl[mov] = player;
+    //console.log("que s1 ", sl)
+    return sl;
 
+}*/
 /*--------------------------MINIMAX--------------------------------*/
 function minimax (s, depth, alpha, beta, playerID){
 	//if node is a leaf node : return value of the node
